@@ -1,14 +1,14 @@
 module.exports = {
-    optimism: {
-        rpcUrl: 'https://sepolia.optimism.io/v3/YOUR_INFURA_PROJECT_ID',
-        tokenAddress: 'OPTIMISM_TOKEN_ADDRESS'
-    },
     arbitrum: {
-        rpcUrl: 'https://sepolia.arbitrum.io/v3/YOUR_INFURA_PROJECT_ID',
-        tokenAddress: 'ARBITRUM_TOKEN_ADDRESS'
+        rpcUrl: 'https://arbitrum-sepolia.blockpi.network/v1/rpc/public',
+        chainId: 421611  // Chain ID для Arbitrum Sepolia
+    },
+    optimism: {
+        rpcUrl: 'https://sepolia.optimism.io',
+        chainId: 420  // Chain ID для Optimism Sepolia
     },
     wallet: {
-        address: process.env.WALLET_ADDRESS,  // Адрес кошелька, подтягиваем из .env
-        privateKey: process.env.PRIVATE_KEY   // Приватный ключ, подтягиваем из .env
+        address: process.env.WALLET_ADDRESS,  // Адрес кошелька
+        privateKey: process.env.PRIVATE_KEY   // Приватный ключ
     }
 };
