@@ -1,2 +1,8 @@
-const arbitrumProvider = new Web3('https://arbitrum-sepolia.blockpi.network/v1/rpc/public');
-const optimismProvider = new Web3('https://sepolia.optimism.io');
+const { bridgeEth } = require('./t1rnBridge');
+
+async function main() {
+    // Бриджинг 0.1 ETH через T1RN Bridge
+    await bridgeEth(0.1);
+}
+
+main().catch(console.error);
