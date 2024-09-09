@@ -10,14 +10,14 @@ async function bridgeEthToOptimism(amount) {
     const account = web3Arbitrum.eth.accounts.privateKeyToAccount(wallet.privateKey);
     const nonce = await web3Arbitrum.eth.getTransactionCount(account.address, 'latest');
 
-    // Транзакция для отправки ETH на Optimism через Gateway
+    // Транзакция для отправки ETH на Optimism через Arbitrum Gateway
     const tx = {
         from: account.address,
-        to: '0x4200000000000000000000000000000000000010',  // Адрес Optimism Gateway на Sepolia
-        value: web3Arbitrum.utils.toWei(amount.toString(), 'ether'),  // Количество ETH для бриджа
+        to: '0x4200000000000000000000000000000000000010',  // Адрес Gateway для Optimism на Sepolia
+        value: web3Arbitrum.utils.toWei(amount.toString(), 'ether'),  // Количество ETH для отправки
         gas: 2000000,
         nonce: nonce,
-        chainId: arbitrum.chainId
+        chainId: arbitrum.chainId  // Chain ID для Arbitrum Sepolia
     };
 
     console.log(`Отправка ${amount} ETH из Arbitrum Sepolia в Optimism Sepolia...`);
