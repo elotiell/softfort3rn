@@ -1,4 +1,3 @@
-const Web3 = require('web3');
 const { wallet } = require('../config/networks');
 
 // Подписываем и отправляем транзакцию
