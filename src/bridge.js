@@ -1,41 +1,37 @@
 const Web3 = require('web3');
-const { getTokenBalance } = require('./token');
+const { arbitrum, optimism, wallet } = require('../config/networks');
 const { sendSignedTransaction } = require('./transaction');
-const { optimism, wallet } = require('../config/networks');
 
-// Подключение к сети Optimism
+// Провайдеры сетей
+const web3Arbitrum = new Web3(new Web3.providers.HttpProvider(arbitrum.rpcUrl));
 const web3Optimism = new Web3(new Web3.providers.HttpProvider(optimism.rpcUrl));
 
-// Бриджинг токенов
-async function bridgeTokens(amount) {
-    const nonce = await web3Optimism.eth.getTransactionCount(wallet.address, 'latest');
-    
+async function bridgeEthToOptimism(amount) {
+    const account = web3Arbitrum.eth.accounts.privateKeyToAccount(wallet.privateKey);
+    const nonce = await web3Arbitrum.eth.getTransactionCount(account.address, 'latest');
+
+    // Транзакция для отправки ETH на Optimism через Gateway
     const tx = {
-        from: wallet.address,
-        to: optimism.tokenAddress,  // Это контракт токена, можно заменить на адрес бриджа
+        from: account.address,
+        to: '0x4200000000000000000000000000000000000010',  // Адрес Optimism Gateway на Sepolia
+        value: web3Arbitrum.utils.toWei(amount.toString(), 'ether'),  // Количество ETH для бриджа
+        gas: 2000000,
         nonce: nonce,
-        gas: 500000,
-        data: ''  // В зависимости от бриджа сюда пойдет encodeABI метода для бриджинга
+        chainId: arbitrum.chainId
     };
 
-    // Отправляем подписанную транзакцию
-    await sendSignedTransaction(web3Optimism, tx);
+    console.log(`Отправка ${amount} ETH из Arbitrum Sepolia в Optimism Sepolia...`);
+    
+    // Подписываем и отправляем транзакцию
+    const receipt = await sendSignedTransaction(web3Arbitrum, tx);
+    console.log('Транзакция подтверждена:', receipt);
 }
 
-// Главная функция, которая запускает бридж
 async function main() {
-    try {
-        // Получаем баланс перед бриджингом
-        const balance = await getTokenBalance(web3Optimism, optimism.tokenAddress, wallet.address);
-        console.log('Текущий баланс на Optimism:', balance);
+    const amountToBridge = 0.1;  // Например, бридж 0.1 ETH
+    await bridgeEthToOptimism(amountToBridge);
 
-        // Бридж токенов
-        const amountToBridge = Web3.utils.toWei('1', 'ether');  // Примерно 1 токен для бриджинга
-        await bridgeTokens(amountToBridge);
-
-    } catch (error) {
-        console.error('Ошибка при бридже:', error);
-    }
+    console.log('Теперь отслеживай баланс на Optimism');
 }
 
-main();
+main().catch(console.error);
